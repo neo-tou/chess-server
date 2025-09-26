@@ -1,6 +1,6 @@
 ﻿// server.js
 import express from "express";
-import puppeteer from "puppeteer"; // use full puppeteer here
+import puppeteer from "puppeteer-core"; // use puppeteer-core with Browserless
 
 const app = express();
 const PORT = process.env.PORT || 10000;
@@ -17,29 +17,18 @@ app.use((req, res, next) => {
   next();
 });
 
-// Puppeteer launch options
-const PUPPETEER_OPTIONS = {
-  headless: true,
-  executablePath: process.env.CHROME_PATH || undefined, // points to Docker-installed Chromium
-  args: [
-    "--no-sandbox",
-    "--disable-setuid-sandbox",
-    "--disable-dev-shm-usage",
-    "--disable-gpu",
-    "--single-process",
-  ],
-};
+// Browserless configuration
+const BROWSERLESS_API_KEY = process.env.BROWSERLESS_KEY || "2T7w2kaHQ7LUI253ac8ae133e2ef17c391b2d066e2a19e02a2T7w2kaHQ7LUI253ac8ae133e2ef17c391b2d066e2a19e02a";
+const BROWSERLESS_URL = `wss://chrome.browserless.io?token=${BROWSERLESS_API_KEY}`;
 
-let browser;
 async function getBrowser() {
-  if (!browser) browser = await puppeteer.launch(PUPPETEER_OPTIONS);
-  return browser;
+  return puppeteer.connect({ browserWSEndpoint: BROWSERLESS_URL });
 }
 
 // PGN extractor
 async function getPgn(url) {
-  const b = await getBrowser();
-  const page = await b.newPage();
+  const browser = await getBrowser();
+  const page = await browser.newPage();
   try {
     await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 });
     await page.waitForSelector(".main-line-row", { timeout: 20000 });
@@ -64,6 +53,7 @@ async function getPgn(url) {
     return pgn.trim();
   } finally {
     try { await page.close(); } catch {}
+    try { await browser.close(); } catch {}
   }
 }
 
@@ -84,8 +74,8 @@ app.post("/fetch-pgn", async (req, res) => {
 });
 
 // Cleanup
-process.on("SIGINT", async () => { if (browser) await browser.close(); process.exit(); });
-process.on("exit", async () => { if (browser) await browser.close(); });
+process.on("SIGINT", async () => { process.exit(); });
+process.on("exit", async () => {});
 
 // Start server
-app.listen(PORT, () => console.log(`✅ Puppeteer PGN server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`✅ Browserless PGN server running on port ${PORT}`));
