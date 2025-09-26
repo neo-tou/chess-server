@@ -1,0 +1,14 @@
+{
+  "name": "puppeteer-pgn-server",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "server-puppeteer.js",
+  "scripts": {
+    "start": "node server-puppeteer.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "puppeteer": "^23.1.0",
+    "node-fetch": "^3.3.2"
+  }
+}
