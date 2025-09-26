@@ -1,10 +1,9 @@
 # Use official Node.js image
 FROM node:20-slim
 
-# Install Chromium for puppeteer-core
+# Install Chromium and dependencies for puppeteer
 RUN apt-get update && apt-get install -y \
     chromium \
-    chromium-common \
     fonts-liberation \
     libatk-bridge2.0-0 \
     libatk1.0-0 \
@@ -30,18 +29,20 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /app
 
-# Copy package files first (better caching)
+# Copy package files first (for caching)
 COPY package*.json ./
+
+# Install dependencies (full puppeteer will download its own Chromium too)
 RUN npm install --production
 
 # Copy server code
 COPY . .
 
-# Expose app port
-EXPOSE 10000
-
-# Env var for puppeteer-core executable
+# Set Chromium path for puppeteer
 ENV CHROME_PATH=/usr/bin/chromium
 
-# Start app
+# Expose port
+EXPOSE 10000
+
+# Start the server
 CMD ["npm", "start"]

@@ -1,6 +1,6 @@
 ﻿// server.js
 import express from "express";
-import puppeteer from "puppeteer-core";
+import puppeteer from "puppeteer"; // use full puppeteer here
 
 const app = express();
 const PORT = process.env.PORT || 10000;
@@ -17,17 +17,17 @@ app.use((req, res, next) => {
   next();
 });
 
-// Puppeteer launch options (Render + Docker)
+// Puppeteer launch options
 const PUPPETEER_OPTIONS = {
   headless: true,
-  executablePath: process.env.CHROME_PATH || "/usr/bin/chromium",
+  executablePath: process.env.CHROME_PATH || undefined, // points to Docker-installed Chromium
   args: [
     "--no-sandbox",
     "--disable-setuid-sandbox",
     "--disable-dev-shm-usage",
     "--disable-gpu",
-    "--single-process"
-  ]
+    "--single-process",
+  ],
 };
 
 let browser;
