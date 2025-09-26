@@ -5,7 +5,6 @@ FROM node:20-slim
 RUN apt-get update && apt-get install -y \
     chromium \
     chromium-common \
-    chromium-driver \
     fonts-liberation \
     libatk-bridge2.0-0 \
     libatk1.0-0 \
@@ -31,14 +30,14 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /app
 
-# Copy package files and install
+# Copy package files first (better caching)
 COPY package*.json ./
 RUN npm install --production
 
 # Copy server code
 COPY . .
 
-# Expose port
+# Expose app port
 EXPOSE 10000
 
 # Env var for puppeteer-core executable
