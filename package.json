@@ -1,14 +1,13 @@
 {
-  "name": "puppeteer-pgn-server",
+  "name": "chess-pgn-server",
   "version": "1.0.0",
   "type": "module",
-  "main": "server-puppeteer.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node server-puppeteer.js"
+    "start": "node server.js"
   },
   "dependencies": {
     "express": "^4.19.2",
-    "puppeteer": "^23.1.0",
-    "node-fetch": "^3.3.2"
+    "puppeteer": "^22.10.0"
   }
 }
